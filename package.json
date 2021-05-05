@@ -11,7 +11,7 @@
     "bootstrap": "^5.0.0-beta3",
     "mitt": "^2.1.0",
     "vue": "^3.0.0",
-    "vue-router": "^4.0.0-0",
+    "vue-router": "^4.0.6",
     "vuex": "^4.0.0-0"
   },
   "devDependencies": {
