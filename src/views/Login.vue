@@ -19,7 +19,8 @@
 
 <script lang="ts">
 import { defineComponent, reactive, ref } from 'vue'
-import { useRouter } from 'vue-router';
+import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 import ValidateInput, { RuleProps } from '@/views/ValidateInput.vue'
 import ValidateForm from '@/views/ValidateForm.vue'
 
@@ -32,6 +33,7 @@ export default defineComponent({
   setup() {
     const emailVal = ref('')
     const router = useRouter()
+    const store = useStore()
     const passwordVal = ref('')
     const emailRef = reactive({
       val: '',
@@ -46,9 +48,9 @@ export default defineComponent({
       {type: 'required', message: '密码不能为空'},
     ]
     const onFormSubmit = (result: boolean) => {
-      console.log("result", result)
       if (result) {
-        router.push({name: 'column', params: {id: 1}})
+        router.push('/')
+        store.commit('login')
       }
     }
 

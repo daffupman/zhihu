@@ -16,8 +16,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, computed } from 'vue'
-import { PostProps } from '@/testData';
+import { defineComponent, PropType } from 'vue'
+import { PostProps } from '@/store/index.ts';
 
 export default defineComponent({
   name: 'PostList',
