@@ -1,26 +1,28 @@
-import {createStore} from 'vuex'
+import {Commit, createStore} from 'vuex'
+import axios from 'axios'
 
 export interface ColumnProps {
-    id: number;
+    _id: string;
     title: string;
-    avatar?: string;
+    avatar?: ImageProps;
     description: string;
 }
 
 export interface PostProps {
-    id: number;
+    _id: number;
     title: string;
-    content: string;
-    image?: string;
+    excerpt?: string;
+    content?: string;
+    image?: ImageProps;
     createdAt: string;
-    columnId: number;
+    column: string;
 }
 
 interface UserProps {
     isLogin: boolean;
     name?: string;
     id?: number;
-    columnId?: number;
+    columnId?: string;
 }
 
 export interface GlobalDataProps {
@@ -29,97 +31,64 @@ export interface GlobalDataProps {
     user: UserProps;
 }
 
-export const testData: ColumnProps[] = [
-    {
-        id: 1,
-        title: 'test1的专栏',
-        description: '这是的test1专栏，有一段非常有意思的简介，可以更新一下欧',
-        avatar: 'http://vue-maker.oss-cn-hangzhou.aliyuncs.com/vue-marker/5ee22dd58b3c4520912b9470.jpg?x-oss-process=image/resize,m_pad,h_100,w_100'
-    },
-    {
-        id: 2,
-        title: 'test2的专栏',
-        description: '这是的test2专栏，有一段非常有意思的简介，可以更新一下欧',
-        avatar: 'http://vue-maker.oss-cn-hangzhou.aliyuncs.com/vue-marker/5ee22dd58b3c4520912b9470.jpg?x-oss-process=image/resize,m_pad,h_100,w_100'
-    },
-    {
-        id: 3,
-        title: 'test3的专栏',
-        description: '这是的test3专栏，有一段非常有意思的简介，可以更新一下欧'
-        // , avatar: 'http://vue-maker.oss-cn-hangzhou.aliyuncs.com/vue-marker/5ee22dd58b3c4520912b9470.jpg?x-oss-process=image/resize,m_pad,h_100,w_100'
-    },
-    {
-        id: 4,
-        title: 'test4的专栏',
-        description: '这是的test4专栏，有一段非常有意思的简介，可以更新一下欧',
-        avatar: 'http://vue-maker.oss-cn-hangzhou.aliyuncs.com/vue-marker/5ee22dd58b3c4520912b9470.jpg?x-oss-process=image/resize,m_pad,h_100,w_100'
-    },
-    {
-        id: 5,
-        title: 'test5的专栏',
-        description: '这是的test5专栏，有一段非常有意思的简介，可以更新一下欧',
-        avatar: 'http://vue-maker.oss-cn-hangzhou.aliyuncs.com/vue-marker/5ee22dd58b3c4520912b9470.jpg?x-oss-process=image/resize,m_pad,h_100,w_100'
-    },
-    {
-        id: 6,
-        title: 'test6的专栏',
-        description: '这是的test6专栏，有一段非常有意思的简介，可以更新一下欧',
-        avatar: 'http://vue-maker.oss-cn-hangzhou.aliyuncs.com/vue-marker/5ee22dd58b3c4520912b9470.jpg?x-oss-process=image/resize,m_pad,h_100,w_100'
-    }
-]
+export interface ImageProps {
+    id?: string;
+    url?: string;
+    createdAt?: string;
+}
 
-export const testPosts: PostProps[] = [
-    {
-        id: 1,
-        title: '这是我的第一篇文章',
-        content: '"this is a new post you Very often we will need to map routes with the given pattern to the same component. For example we may have a User component which should be rendered for all users but with dif..."',
-        image: 'http://vue-maker.oss-cn-hangzhou.aliyuncs.com/vue-marker/5ee1980819f4ae08ac78d458.png?x-oss-process=image/resize,m_fill,m_pad,w_200,h_110',
-        createdAt: '2020-06-11 10:34:22',
-        columnId: 1
-    },
-    {
-        id: 2,
-        title: '这是我的第二篇文章',
-        content: '"this is a new post you Very often we will need to map routes with the given pattern to the same component. For example we may have a User component which should be rendered for all users but with dif..."',
-        createdAt: '2020-06-11 10:34:22',
-        columnId: 1
-    },
-    {
-        id: 3,
-        title: '这是我的第三篇文章',
-        content: '"this is a new post you Very often we will need to map routes with the given pattern to the same component. For example we may have a User component which should be rendered for all users but with dif..."',
-        image: 'https://vue-maker.oss-cn-hangzhou.aliyuncs.com/vue-marker/5edcc2329f2b4e28352b75eb.jpg?x-oss-process=image/resize,m_fill,m_pad,w_200,h_110',
-        createdAt: '2020-06-11 10:34:22',
-        columnId: 1
-    }
-]
+const getAndCommit = async (url: string, mutationName: string, commit: Commit) => {
+    const { data } = await axios.get(url)
+    commit(mutationName, data)
+}
 
 const store = createStore<GlobalDataProps>({
     state: {
-        columns: testData,
-        posts: testPosts,
+        columns: [],
+        posts: [],
         user: {
             isLogin: true,
             name: 'zhengjin',
-            columnId: 1
+            columnId: '1'
         }
     },
+    // 同步操作
     mutations: {
         login(state) {
             state.user = { ...state.user, isLogin: true, name: 'zhengjin'}
         },
         createPost(state, newPost) {
             state.posts.push(newPost)
+        },
+        fetchColumns(state, rawData) {
+            state.columns = rawData.data.list
+        },
+        fetchColumn(state, rawData) {
+            state.columns = [rawData.data]
+        },
+        fetchPosts(state, rawData) {
+            state.posts = rawData.data.list
         }
     },
-    actions: {},
+    // 可以同步，可以异步
+    actions: {
+        async fetchColumns({ commit }) {
+            await getAndCommit('/columns', 'fetchColumns', commit)
+        },
+        async fetchColumn({ commit }, cid) {
+            await getAndCommit(`/columns/${cid}`, 'fetchColumn', commit)
+        },
+        async fetchPosts({ commit }, cid) {
+            await getAndCommit(`/columns/${cid}/posts`, 'fetchPosts', commit)
+        },
+    },
     modules: {},
     getters: {
-        getColumnById: (state) => (id: number) => {
-            return state.columns.find(c => c.id === id)
+        getColumnById: (state) => (id: string) => {
+            return state.columns.find(c => c._id === id)
         },
-        getPostsByCid: (state) => (cid: number) => {
-            return state.posts.filter(post => post.columnId === cid)
+        getPostsByCid: (state) => (cid: string) => {
+            return state.posts.filter(post => post.column === cid)
         }
     }
 })
