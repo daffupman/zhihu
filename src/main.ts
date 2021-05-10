@@ -13,6 +13,11 @@ axios.interceptors.request.use(config => {
     } else {
         config.data = { ...config.data, icode}
     }
+    store.commit('setLoading', true)
+    return config
+})
+axios.interceptors.response.use(config => {
+    store.commit('setLoading', false)
     return config
 })
 const app = createApp(App);

@@ -30,8 +30,10 @@ export default defineComponent({
   setup() {
     const store = useStore()
     const currentUser = computed(() => store.state.user)
+    const isLoading = computed(() => store.state.loading)
     return {
       user: currentUser,
+      isLoading,
     }
   }
 })

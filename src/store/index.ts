@@ -26,6 +26,7 @@ interface UserProps {
 }
 
 export interface GlobalDataProps {
+    loading: boolean;
     columns: ColumnProps[];
     posts: PostProps[];
     user: UserProps;
@@ -39,11 +40,13 @@ export interface ImageProps {
 
 const getAndCommit = async (url: string, mutationName: string, commit: Commit) => {
     const { data } = await axios.get(url)
+    await new Promise(resolve => setTimeout(resolve, 3000))
     commit(mutationName, data)
 }
 
 const store = createStore<GlobalDataProps>({
     state: {
+        loading: false,
         columns: [],
         posts: [],
         user: {
@@ -68,6 +71,9 @@ const store = createStore<GlobalDataProps>({
         },
         fetchPosts(state, rawData) {
             state.posts = rawData.data.list
+        },
+        setLoading(state, status) {
+            state.loading = status
         }
     },
     // 可以同步，可以异步
