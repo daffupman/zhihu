@@ -36,13 +36,14 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-    if (to.meta.requiredLogin !== 'login' && !store.state.user.isLogin) {
-        next({name: 'login'})
-    } else if (to.meta.redirectAlreadyLogin && store.state.user.isLogin) {
-        next('/')
-    } else {
-        next()
-    }
+    next()
+    // if (to.meta.requiredLogin !== 'login' && !store.state.user.isLogin) {
+    //     next({name: 'login'})
+    // } else if (to.meta.redirectAlreadyLogin && store.state.user.isLogin) {
+    //     next('/')
+    // } else {
+    //     next()
+    // }
 })
 
 export default router
